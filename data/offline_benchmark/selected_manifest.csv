@@ -1,0 +1,4 @@
+topic_number,topic_id,filename,title,bytes,approx_embedded_prose_words,source_documents,facts,case_studies,data_tables
+1,AIAGENT-01,01_single_agent_vs_multi_agent_architectures_for_complex_research_tasks.json,Single-Agent vs Multi-Agent Architectures for Complex Research Tasks,95284,4934,9,30,4,3
+12,AIAGENT-12,12_critic_and_verifier_agents_for_research_report_quality.json,Critic and Verifier Agents for Research Report Quality,91203,4839,9,30,4,3
+22,AIAGENT-22,22_cost_latency_and_parallelism_in_multi_agent_research.json,"Cost, Latency, and Parallelism in Multi-Agent Research",92164,4835,9,30,4,3

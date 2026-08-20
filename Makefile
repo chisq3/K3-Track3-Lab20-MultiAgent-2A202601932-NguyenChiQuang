@@ -1,25 +1,25 @@
 .PHONY: install test lint format typecheck run-baseline run-multi clean
 
 install:
-	pip install -e ".[dev,llm]"
+	uv sync --locked --extra dev --extra llm
 
 test:
-	pytest
+	uv run --locked pytest
 
 lint:
-	ruff check src tests
+	uv run --locked ruff check src tests
 
 format:
-	ruff format src tests
+	uv run --locked ruff format src tests
 
 typecheck:
-	mypy src
+	uv run --locked mypy src
 
 run-baseline:
-	python -m multi_agent_research_lab.cli baseline --query "Research GraphRAG state-of-the-art"
+	uv run --locked python -m multi_agent_research_lab.cli baseline --query "Research GraphRAG state-of-the-art"
 
 run-multi:
-	python -m multi_agent_research_lab.cli multi-agent --query "Research GraphRAG state-of-the-art"
+	uv run --locked python -m multi_agent_research_lab.cli multi-agent --query "Research GraphRAG state-of-the-art"
 
 clean:
 	rm -rf .pytest_cache .ruff_cache .mypy_cache dist build *.egg-info

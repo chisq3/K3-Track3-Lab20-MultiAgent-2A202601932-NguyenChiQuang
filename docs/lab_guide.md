@@ -1,117 +1,98 @@
-# Lab Guide: Multi-Agent Research System
+# Hướng dẫn Lab 20: Hệ thống Nghiên cứu Multi-Agent
 
-## Scenario
+## Bối cảnh
 
-Bạn cần xây dựng một research assistant có thể nhận câu hỏi dài, tìm thông tin, phân tích và viết câu trả lời cuối cùng. Lab yêu cầu so sánh hai cách làm:
+Bài lab xây dựng một research assistant có thể nhận câu hỏi nghiên cứu, tìm nguồn, phân tích và viết câu trả lời cuối. Hai kiến trúc được triển khai trên cùng input để so sánh:
 
-1. **Single-agent baseline**: một agent làm toàn bộ.
-2. **Multi-agent workflow**: Supervisor điều phối Researcher, Analyst, Writer.
+1. **Single-agent baseline** — một agent thực hiện search + tổng hợp trong một lượt generation.
+2. **Multi-agent workflow** — Supervisor điều phối Researcher, Analyst và Writer; Critic là bonus tùy chọn.
 
-## Quy tắc quan trọng
+Bản repo hiện tại đã hoàn thành toàn bộ core workflow, tracing, benchmark và bonus Critic.
 
-- Không thêm agent nếu không có lý do rõ ràng.
-- Mỗi agent phải có responsibility riêng.
-- Shared state phải đủ rõ để debug.
-- Phải có trace hoặc log cho từng bước.
-- Phải benchmark, không chỉ nhìn output bằng cảm tính.
+## Quy tắc thiết kế
 
-## Milestone 1: Baseline
+- Chỉ thêm agent khi vai trò tạo ra trách nhiệm rõ ràng.
+- Shared state là nguồn dữ liệu duy nhất cho handoff và debug.
+- Supervisor định tuyến deterministic, không dùng LLM để route.
+- Có max iterations, timeout, retry/fallback và validation.
+- Citation chỉ được trỏ tới source thực sự tồn tại trong state.
+- Benchmark bằng số liệu; không kết luận chỉ dựa trên một output đẹp.
+- Critic không được search lại và chỉ có tối đa một revision.
 
-File gợi ý:
+## Trạng thái milestone
 
-- `src/multi_agent_research_lab/cli.py`
-- `src/multi_agent_research_lab/services/llm_client.py`
+### Milestone 1 — Baseline ✅
 
-TODO(student): thay baseline placeholder bằng một call LLM thật.
+- OpenRouter LLM client hoàn chỉnh.
+- Tavily search client hoàn chỉnh.
+- Baseline chạy end-to-end, thu latency/token/cost và trace.
 
-## Milestone 2: Supervisor
+### Milestone 2 — Supervisor & LangGraph ✅
 
-File gợi ý:
+- Routing deterministic qua `Researcher → Analyst → Writer`.
+- Có stop condition, timeout và max iteration.
+- Có retry/fallback theo failure context.
 
-- `src/multi_agent_research_lab/agents/supervisor.py`
-- `src/multi_agent_research_lab/graph/workflow.py`
+### Milestone 3 — Worker agents ✅
 
-TODO(student): implement routing policy.
+- Researcher tìm/chuẩn hóa nguồn và tạo `research_notes`.
+- Analyst đánh giá evidence và tạo `analysis_notes`.
+- Writer tổng hợp final answer có citation validation.
 
-Gợi ý câu hỏi thiết kế:
+### Milestone 4 — Trace & Benchmark ✅
 
-- Khi nào gọi Researcher?
-- Khi nào gọi Analyst?
-- Khi nào gọi Writer?
-- Khi nào stop?
-- Nếu agent fail thì retry hay fallback?
+- LangSmith tracing end-to-end.
+- Benchmark online 27 runs.
+- Controlled offline benchmark 18 runs.
+- Independent blind quality judge, citation coverage/validity, latency, token, cost và failure rate.
 
-## Milestone 3: Worker agents
+### Milestone 5 — Critic bonus ✅
 
-File gợi ý:
+- `ENABLE_CRITIC=false` mặc định.
+- Critic trả structured `pass/revise` feedback.
+- Writer revision dùng existing sources/analysis, không re-search.
+- `MAX_REVISIONS=1` ngăn revision loop vô hạn.
 
-- `src/multi_agent_research_lab/agents/researcher.py`
-- `src/multi_agent_research_lab/agents/analyst.py`
-- `src/multi_agent_research_lab/agents/writer.py`
+## Failure mode quan sát được
 
-TODO(student): implement từng worker.
+Final benchmark ghi nhận ba nhóm lỗi thực tế:
 
-## Milestone 4: Trace và benchmark
+1. **Timeout:** workflow nhiều bước tăng execution surface và dễ chạm timeout hơn baseline.
+2. **Writer citation validation:** Writer có thể tạo Sources section không đúng citation contract; guardrail retry rồi dừng nếu vẫn sai.
+3. **Critic structured-output validation:** Critic có thể chọn `revise` nhưng không cung cấp issue actionable; validator từ chối output và không cho loop vô hạn.
 
-File gợi ý:
-
-- `src/multi_agent_research_lab/observability/tracing.py`
-- `src/multi_agent_research_lab/evaluation/benchmark.py`
-- `src/multi_agent_research_lab/evaluation/report.py`
-
-Benchmark tối thiểu:
-
-| Metric | Cách đo gợi ý |
-|---|---|
-| Latency | wall-clock time |
-| Cost | token usage hoặc provider usage |
-| Quality | rubric 0-10 do peer review |
-| Citation coverage | số claims có source / tổng claims chính |
-| Failure rate | số query fail / tổng query |
+Các failure này được giữ trong report thay vì lọc bỏ để success rate phản ánh đúng hành vi hệ thống.
 
 ## Troubleshooting
 
-### macOS: lỗi SSL certificate khi gọi API qua HTTPS (Tavily, OpenAI, ...)
+### macOS: `SSLCertVerificationError`
 
-Triệu chứng: khi implement `SearchClient` (hoặc bất kỳ HTTPS call nào) trên macOS, bạn có thể gặp lỗi kiểu:
+Nếu Python cài từ python.org không tìm thấy CA bundle, có thể chọn một trong các cách:
 
+```bash
+/Applications/Python\ 3.12/Install\ Certificates.command
 ```
-ssl.SSLCertVerificationError: [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed:
-unable to get local issuer certificate
+
+hoặc dùng `certifi`, hoặc đặt:
+
+```bash
+export SSL_CERT_FILE=$(python -m certifi)
 ```
 
-Nguyên nhân: Python cài từ python.org trên macOS **không dùng** certificate store của hệ điều hành, nên không tìm thấy CA bundle hợp lệ. Đây là lỗi môi trường, **không phải** do API key sai.
+Đây là lỗi môi trường, không nhất thiết do API key.
 
-Cách khắc phục (chọn 1 trong 3):
+## Exit Ticket — Câu trả lời
 
-1. **Chạy script cài certificate đi kèm Python** (nhanh nhất):
+### 1. Khi nào nên dùng multi-agent? Vì sao?
 
-   ```bash
-   /Applications/Python\ 3.12/Install\ Certificates.command
-   ```
+Nên dùng multi-agent cho research task cần **strict citation compliance, auditability, artefact trung gian và validation/retry rõ ràng**, đặc biệt khi chi phí của một final answer không hợp lệ cao hơn orchestration overhead.
 
-   (thay `3.12` bằng version Python của bạn)
+Trong benchmark online, core multi-agent tạo **7/9 = 77.8%** runs vừa `completed` vừa strict citation-valid, cao hơn baseline **6/9 = 66.7%**. Trong controlled offline benchmark, core multi-agent đạt **4/6 = 66.7%**, trong khi baseline chỉ **2/6 = 33.3%**. Kết quả offline đặc biệt quan trọng vì evidence set được cố định, cho thấy lợi thế citation compliance không chỉ là hệ quả của Tavily variance.
 
-2. **Dùng `certifi` trong code** — thêm `certifi` vào dependencies, rồi tạo SSL context khi gọi HTTPS:
+### 2. Khi nào không nên dùng multi-agent? Vì sao?
 
-   ```python
-   import certifi
-   import ssl
-   from urllib.request import urlopen
+Không nên dùng multi-agent cho tác vụ đơn giản hoặc khi **latency, cost và completion reliability** quan trọng hơn khả năng orchestration/validation.
 
-   ssl_context = ssl.create_default_context(cafile=certifi.where())
-   urlopen(request, timeout=timeout, context=ssl_context)
-   ```
+Trong benchmark online, baseline hoàn thành **100%** runs với trung bình **17.35s**, **2,205 tokens** và **$0.000651/run**. Core multi-agent hoàn thành **77.8%** runs với **43.09s**, **9,028 tokens** và **$0.002083/run**. Vì vậy multi-agent chỉ đáng dùng khi lợi ích về citation/auditability đủ quan trọng để bù overhead.
 
-3. **Set biến môi trường** trỏ tới CA bundle của certifi (không cần đổi code):
-
-   ```bash
-   export SSL_CERT_FILE=$(python -m certifi)
-   ```
-
-## Exit ticket
-
-Mỗi nhóm trả lời 2 câu:
-
-1. Case nào nên dùng multi-agent? Vì sao?
-2. Case nào không nên dùng multi-agent? Vì sao?
+Critic nên giữ là optional bonus mode: benchmark cho thấy nó tăng token/cost và failure surface nhưng chưa tạo quality gain ổn định.

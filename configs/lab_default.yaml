@@ -5,17 +5,22 @@ lab:
 
 agents:
   supervisor:
-    model: gpt-4o-mini
+    model: openai/gpt-4o-mini
     temperature: 0.0
   researcher:
-    model: gpt-4o-mini
+    model: openai/gpt-4o-mini
     temperature: 0.2
   analyst:
-    model: gpt-4o-mini
+    model: openai/gpt-4o-mini
     temperature: 0.1
   writer:
-    model: gpt-4o-mini
+    model: openai/gpt-4o-mini
     temperature: 0.4
+  critic:
+    enabled: false
+    model: openai/gpt-4o-mini
+    temperature: 0.0
+    max_revisions: 1
 
 benchmark:
   queries:

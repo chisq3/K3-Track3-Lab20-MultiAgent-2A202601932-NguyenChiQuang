@@ -1,20 +1,24 @@
-# Peer Review Rubric
+# Rubric Phản biện Chéo
 
-Mỗi nhóm review repo/trace của một nhóm khác trong 8 phút.
+Mỗi nhóm review repo/trace của một nhóm khác trong khoảng 8 phút.
 
-| Tiêu chí | Câu hỏi | Điểm |
+| Tiêu chí | Câu hỏi đánh giá | Điểm |
 |---|---|---:|
-| Role clarity | Mỗi agent có nhiệm vụ rõ, không overlap quá nhiều không? | 0-2 |
-| State design | Shared state có đủ thông tin để handoff mà không mất context không? | 0-2 |
-| Failure guard | Có max iterations, timeout, retry/fallback, validation không? | 0-2 |
-| Benchmark | Có so sánh single vs multi-agent bằng metric cụ thể không? | 0-2 |
-| Trace explanation | Nhóm giải thích được trace: ai làm gì, tốn bao nhiêu, sai ở đâu không? | 0-2 |
+| Độ rõ vai trò | Mỗi agent có nhiệm vụ rõ ràng, không overlap quá mức không? | 0–2 |
+| Thiết kế shared state | State có đủ thông tin cho handoff và debug mà không mất context không? | 0–2 |
+| Guardrail lỗi | Có max iterations, timeout, retry/fallback và validation không? | 0–2 |
+| Benchmark | Có so sánh single-agent và multi-agent bằng metric cụ thể không? | 0–2 |
+| Giải thích trace | Nhóm giải thích được agent nào làm gì, tốn bao nhiêu và lỗi xảy ra ở đâu không? | 0–2 |
 
-## Feedback format
+## Mẫu feedback
 
 ```text
-Strength:
-Risk / failure mode:
-One concrete improvement:
-Score:
+Điểm mạnh:
+Rủi ro / failure mode:
+Một cải tiến cụ thể:
+Điểm:
 ```
+
+## Tự đánh giá bản triển khai này
+
+Với final repo, các tiêu chí cốt lõi đều đã có evidence tương ứng: role separation, typed shared state, guardrail/retry/timeout, benchmark online + offline và LangSmith trace. Critic là phần bonus và được giữ bounded bằng `MAX_REVISIONS=1`.

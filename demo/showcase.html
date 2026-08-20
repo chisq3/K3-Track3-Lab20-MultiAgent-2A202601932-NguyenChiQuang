@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Lab 20 · Showcase Hệ thống Nghiên cứu Multi-Agent</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0b1020;
+      --panel: #121a2f;
+      --panel2: #17213a;
+      --text: #edf2ff;
+      --muted: #9fb0d0;
+      --line: #273656;
+      --accent: #7dd3fc;
+      --good: #86efac;
+      --warn: #fde68a;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif;
+      background: radial-gradient(circle at top right, #152345 0, var(--bg) 45%);
+      color: var(--text);
+    }
+    main { width: min(1180px, calc(100% - 32px)); margin: 0 auto; padding: 48px 0 72px; }
+    .eyebrow { color: var(--accent); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; font-size: 12px; }
+    h1 { font-size: clamp(36px, 7vw, 72px); line-height: .98; margin: 12px 0 18px; max-width: 980px; }
+    h2 { margin-top: 48px; }
+    p { color: var(--muted); line-height: 1.7; }
+    .lead { font-size: 18px; max-width: 920px; }
+    .grid { display: grid; gap: 16px; }
+    .four { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .card { background: linear-gradient(180deg, var(--panel2), var(--panel)); border: 1px solid var(--line); border-radius: 18px; padding: 20px; }
+    .metric { font-size: 32px; font-weight: 800; margin-top: 6px; }
+    .label { color: var(--muted); font-size: 13px; }
+    .tag { display: inline-block; padding: 6px 10px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); margin: 4px 4px 0 0; font-size: 13px; }
+    .flow { color: var(--accent); font-weight: 700; overflow-wrap: anywhere; }
+    table { width: 100%; border-collapse: collapse; margin-top: 14px; overflow: hidden; border-radius: 14px; }
+    th, td { border-bottom: 1px solid var(--line); text-align: right; padding: 12px 10px; font-size: 14px; }
+    th:first-child, td:first-child { text-align: left; }
+    th { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+    .best { color: var(--good); font-weight: 800; }
+    .note { border-left: 3px solid var(--warn); padding-left: 14px; }
+    .links a { color: var(--accent); text-decoration: none; margin-right: 18px; }
+    code { color: var(--good); }
+    @media (max-width: 850px) {
+      .four, .three, .two { grid-template-columns: 1fr; }
+      table { display: block; overflow-x: auto; }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <div class="eyebrow">Lab 20 · Multi-Agent Systems</div>
+  <h1>Điều phối nghiên cứu nhiều agent, đo bằng số liệu thật.</h1>
+  <p class="lead">So sánh single-agent baseline với workflow Supervisor → Researcher → Analyst → Writer, bổ sung Critic có vòng sửa bị giới hạn, LangSmith tracing và hai môi trường đánh giá online + offline có kiểm soát.</p>
+
+  <section class="grid four">
+    <div class="card"><div class="label">Benchmark online</div><div class="metric">27</div><p>3 query × 3 kiến trúc × 3 lần lặp</p></div>
+    <div class="card"><div class="label">Offline có kiểm soát</div><div class="metric">18</div><p>3 topic × 3 kiến trúc × 2 lần lặp</p></div>
+    <div class="card"><div class="label">Kiến trúc</div><div class="metric">3</div><p>Baseline · Multi-agent · + Critic</p></div>
+    <div class="card"><div class="label">Trace URL online</div><div class="metric">26/27</div><p>Tracing được thiết kế fail-open</p></div>
+  </section>
+
+  <h2>Kiến trúc</h2>
+  <div class="grid two">
+    <div class="card">
+      <div class="label">Luồng core</div>
+      <p class="flow">Supervisor → Researcher → Supervisor → Analyst → Supervisor → Writer → Done</p>
+      <span class="tag">ENABLE_CRITIC=false</span><span class="tag">citation guardrail</span><span class="tag">retry / timeout</span>
+    </div>
+    <div class="card">
+      <div class="label">Luồng assurance bonus</div>
+      <p class="flow">Writer → Critic → pass HOẶC revise có giới hạn → Writer → Critic → stop</p>
+      <span class="tag">MAX_REVISIONS=1</span><span class="tag">không re-search</span><span class="tag">structured review</span>
+    </div>
+  </div>
+
+  <h2>Benchmark online chính</h2>
+  <p>Dùng Tavily retrieval và hành vi mạng/provider thực tế. Run failed được giữ trong kết quả thay vì bị lọc bỏ.</p>
+  <div class="card">
+    <table>
+      <thead><tr><th>Kiến trúc</th><th>Hoàn thành</th><th>Valid completed</th><th>Latency</th><th>Tokens</th><th>Cost</th><th>Quality*</th></tr></thead>
+      <tbody>
+        <tr><td>Baseline</td><td class="best">100%</td><td>66.7%</td><td class="best">17.35s</td><td class="best">2,205</td><td class="best">$0.000651</td><td>10.00</td></tr>
+        <tr><td>Multi-agent core</td><td>77.8%</td><td class="best">77.8%</td><td>43.09s</td><td>9,028</td><td>$0.002083</td><td>9.86</td></tr>
+        <tr><td>Multi-agent + Critic</td><td>55.6%</td><td>55.6%</td><td>45.49s</td><td>14,085</td><td>$0.002873</td><td>10.00</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Benchmark offline có kiểm soát</h2>
+  <p>Cả ba kiến trúc dùng cùng fixed corpus evidence. Điều này loại bỏ Tavily search variance nhưng vẫn giữ LLM generation thực tế.</p>
+  <div class="card">
+    <table>
+      <thead><tr><th>Kiến trúc</th><th>Hoàn thành</th><th>Valid completed</th><th>Latency</th><th>Tokens</th><th>Cost</th><th>Quality*</th></tr></thead>
+      <tbody>
+        <tr><td>Baseline</td><td class="best">100%</td><td>33.3%</td><td class="best">13.93s</td><td class="best">3,228</td><td class="best">$0.000800</td><td>10.00</td></tr>
+        <tr><td>Multi-agent core</td><td>66.7%</td><td class="best">66.7%</td><td>39.12s</td><td>13,376</td><td>$0.002657</td><td>10.00</td></tr>
+        <tr><td>Multi-agent + Critic</td><td>33.3%</td><td>33.3%</td><td>46.03s</td><td>18,446</td><td>$0.003067</td><td>10.00</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Dữ liệu đang nói gì?</h2>
+  <div class="grid three">
+    <div class="card"><div class="label">Hiệu quả</div><p><strong>Baseline</strong> là mốc tốt nhất về latency, token, cost và completion reliability.</p></div>
+    <div class="card"><div class="label">Citation compliance</div><p><strong>Core multi-agent</strong> có valid-completed rate cao nhất trong cả online và controlled offline benchmark.</p></div>
+    <div class="card"><div class="label">Critic bonus</div><p>Bounded Critic loop hoạt động, nhưng dữ liệu chưa biện minh cho việc bật mặc định vì cost/failure surface tăng mà quality gain không ổn định.</p></div>
+  </div>
+
+  <p class="note"><strong>*Lưu ý diễn giải:</strong> judge 0–10 có ceiling effect và average quality/citation validity chỉ tính trên output có thể chấm. Cần đọc cùng completion, strict citation validity, latency, tokens, cost, retry và failure modes.</p>
+
+  <div class="links">
+    <a href="../reports/benchmark_report.md">Báo cáo online</a>
+    <a href="../reports/offline_benchmark/benchmark_report.md">Báo cáo offline</a>
+    <a href="../reports/trace_evidence.md">Trace evidence</a>
+  </div>
+
+  <p style="margin-top:48px">Để chạy live, mở <code>demo/streamlit_app.py</code>. Trang tĩnh là phương án presentation-safe và không gửi request ra ngoài.</p>
+</main>
+</body>
+</html>

@@ -1,3 +1,5 @@
+FROM ghcr.io/astral-sh/uv:0.12.3 AS uv
+
 FROM python:3.11-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
@@ -5,11 +7,14 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
-COPY pyproject.toml README.md ./
+COPY --from=uv /uv /uvx /bin/
+COPY pyproject.toml uv.lock README.md ./
 COPY src ./src
-RUN pip install --no-cache-dir -e ".[llm]"
+RUN uv sync --frozen --no-dev --extra llm
 
 COPY configs ./configs
 COPY docs ./docs
+
+ENV PATH="/app/.venv/bin:$PATH"
 
 ENTRYPOINT ["python", "-m", "multi_agent_research_lab.cli"]

@@ -13,5 +13,9 @@ class AgentExecutionError(LabError):
     """Raised when an agent fails after retries/fallbacks."""
 
 
+class ConfigurationError(LabError):
+    """Raised when required runtime configuration is missing or invalid."""
+
+
 class ValidationError(LabError):
     """Raised when state or output validation fails."""

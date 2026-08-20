@@ -1,0 +1,156 @@
+{
+  "benchmark_mode": "offline-controlled-retrieval",
+  "retrieval_provider": "OfflineCorpusSearchClient",
+  "topics": [
+    {
+      "topic_id": "AIAGENT-01",
+      "topic_name": "Single-Agent vs Multi-Agent Architectures for Complex Research Tasks",
+      "corpus_version": "2.0-rich-offline",
+      "query": "When does a multi-agent architecture produce better research reports than a single capable agent, after accounting for quality, cost, latency, and coordination failure?",
+      "audience": "AI researchers, agent-system engineers, evaluation teams, and technical decision makers",
+      "max_sources": 5,
+      "selected_sources": [
+        {
+          "document_id": "T01-SYN-A",
+          "citation_label": "T01-SYN-A",
+          "title": "Controlled Lab Study on Single-Agent vs Multi-Agent Architectures for Complex Research Tasks",
+          "document_class": "synthetic_experiment",
+          "is_synthetic": true,
+          "provenance_url": null
+        },
+        {
+          "document_id": "T01-SYN-B",
+          "citation_label": "T01-SYN-B",
+          "title": "Field Deployment Retrospective: Single-Agent vs Multi-Agent Architectures for Complex Research Tasks",
+          "document_class": "synthetic_case_study",
+          "is_synthetic": true,
+          "provenance_url": null
+        },
+        {
+          "document_id": "T01-SYN-C",
+          "citation_label": "T01-SYN-C",
+          "title": "Opinion Survey on Single-Agent vs Multi-Agent Architectures for Complex Research Tasks",
+          "document_class": "synthetic_survey",
+          "is_synthetic": true,
+          "provenance_url": null
+        },
+        {
+          "document_id": "autogen",
+          "citation_label": "autogen",
+          "title": "AutoGen: Enabling Next-Gen LLM Applications via Multi-Agent Conversation",
+          "document_class": "public_reference_summary",
+          "is_synthetic": false,
+          "provenance_url": "https://arxiv.org/abs/2308.08155"
+        },
+        {
+          "document_id": "metagpt",
+          "citation_label": "metagpt",
+          "title": "MetaGPT: Meta Programming for A Multi-Agent Collaborative Framework",
+          "document_class": "public_reference_summary",
+          "is_synthetic": false,
+          "provenance_url": "https://arxiv.org/abs/2308.00352"
+        }
+      ]
+    },
+    {
+      "topic_id": "AIAGENT-12",
+      "topic_name": "Critic and Verifier Agents for Research Report Quality",
+      "corpus_version": "2.0-rich-offline",
+      "query": "How should verifier agents check claims, citations, calculations, and logical consistency without becoming redundant with the primary researcher?",
+      "audience": "AI researchers, agent-system engineers, evaluation teams, and technical decision makers",
+      "max_sources": 5,
+      "selected_sources": [
+        {
+          "document_id": "T12-SYN-A",
+          "citation_label": "T12-SYN-A",
+          "title": "Controlled Lab Study on Critic and Verifier Agents for Research Report Quality",
+          "document_class": "synthetic_experiment",
+          "is_synthetic": true,
+          "provenance_url": null
+        },
+        {
+          "document_id": "T12-SYN-B",
+          "citation_label": "T12-SYN-B",
+          "title": "Field Deployment Retrospective: Critic and Verifier Agents for Research Report Quality",
+          "document_class": "synthetic_case_study",
+          "is_synthetic": true,
+          "provenance_url": null
+        },
+        {
+          "document_id": "T12-SYN-C",
+          "citation_label": "T12-SYN-C",
+          "title": "Opinion Survey on Critic and Verifier Agents for Research Report Quality",
+          "document_class": "synthetic_survey",
+          "is_synthetic": true,
+          "provenance_url": null
+        },
+        {
+          "document_id": "agentbench",
+          "citation_label": "agentbench",
+          "title": "AgentBench: Evaluating LLMs as Agents",
+          "document_class": "public_reference_summary",
+          "is_synthetic": false,
+          "provenance_url": "https://arxiv.org/abs/2308.03688"
+        },
+        {
+          "document_id": "anthropic_agents",
+          "citation_label": "anthropic_agents",
+          "title": "Building Effective Agents",
+          "document_class": "public_reference_summary",
+          "is_synthetic": false,
+          "provenance_url": "https://www.anthropic.com/engineering/building-effective-agents"
+        }
+      ]
+    },
+    {
+      "topic_id": "AIAGENT-22",
+      "topic_name": "Cost, Latency, and Parallelism in Multi-Agent Research",
+      "corpus_version": "2.0-rich-offline",
+      "query": "How should a multi-agent system trade off more agents and parallel searches against inference cost, latency, and marginal quality improvement?",
+      "audience": "AI researchers, agent-system engineers, evaluation teams, and technical decision makers",
+      "max_sources": 5,
+      "selected_sources": [
+        {
+          "document_id": "T22-SYN-A",
+          "citation_label": "T22-SYN-A",
+          "title": "Controlled Lab Study on Cost, Latency, and Parallelism in Multi-Agent Research",
+          "document_class": "synthetic_experiment",
+          "is_synthetic": true,
+          "provenance_url": null
+        },
+        {
+          "document_id": "T22-SYN-B",
+          "citation_label": "T22-SYN-B",
+          "title": "Field Deployment Retrospective: Cost, Latency, and Parallelism in Multi-Agent Research",
+          "document_class": "synthetic_case_study",
+          "is_synthetic": true,
+          "provenance_url": null
+        },
+        {
+          "document_id": "T22-SYN-C",
+          "citation_label": "T22-SYN-C",
+          "title": "Opinion Survey on Cost, Latency, and Parallelism in Multi-Agent Research",
+          "document_class": "synthetic_survey",
+          "is_synthetic": true,
+          "provenance_url": null
+        },
+        {
+          "document_id": "autogen",
+          "citation_label": "autogen",
+          "title": "AutoGen: Enabling Next-Gen LLM Applications via Multi-Agent Conversation",
+          "document_class": "public_reference_summary",
+          "is_synthetic": false,
+          "provenance_url": "https://arxiv.org/abs/2308.08155"
+        },
+        {
+          "document_id": "agentbench",
+          "citation_label": "agentbench",
+          "title": "AgentBench: Evaluating LLMs as Agents",
+          "document_class": "public_reference_summary",
+          "is_synthetic": false,
+          "provenance_url": "https://arxiv.org/abs/2308.03688"
+        }
+      ]
+    }
+  ]
+}

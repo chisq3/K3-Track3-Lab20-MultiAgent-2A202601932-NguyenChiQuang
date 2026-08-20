@@ -139,10 +139,9 @@ Bạn hoàn thành khi:
 ```bash
 git clone https://github.com/VinUni-AI20k/VinUni-AI20k-K3-Track3-Lab20-MultiAgent.git
 cd VinUni-AI20k-K3-Track3-Lab20-MultiAgent
-python -m venv .venv && source .venv/bin/activate
-pip install -e ".[dev,llm]"
+uv sync --extra dev --extra llm
 cp .env.example .env   # rồi điền API keys
-make test              # 4 tests phải pass ngay từ đầu
+make test              # tất cả unit tests phải pass
 ```
 
 > **macOS lưu ý:** nếu gặp `SSLCertVerificationError` khi gọi API, xem mục Troubleshooting trong `docs/lab_guide.md` (fix bằng `certifi` hoặc `Install Certificates.command`).

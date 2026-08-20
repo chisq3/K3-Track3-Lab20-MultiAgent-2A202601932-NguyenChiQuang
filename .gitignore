@@ -5,9 +5,25 @@ __pycache__/
 .pytest_cache/
 .ruff_cache/
 .mypy_cache/
+.coverage
+.coverage.*
+htmlcov/
 dist/
 build/
 *.egg-info/
 reports/*.json
 reports/*.md
+!reports/benchmark_report.md
+!reports/trace_evidence.md
+!reports/README.md
 !.gitkeep
+
+# --- Lab 20 showcase / temporary benchmark outputs ---
+reports/benchmark_smoke/
+reports/benchmark_pilot*/
+reports/offline_benchmark_smoke/
+reports/*_smoke/
+reports/*_pilot*/
+!reports/README.md
+.streamlit/secrets.toml
+# --- end Lab 20 showcase block ---
